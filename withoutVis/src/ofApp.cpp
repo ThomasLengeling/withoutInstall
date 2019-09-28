@@ -191,6 +191,10 @@ void ofApp::keyPressed(int key){
 	if (key == '1') {
 		mDrawType = 1;
 	}
+
+	if (key == 'f') {
+		ofToggleFullscreen();
+	}
 }
 
 
