@@ -25,12 +25,15 @@ void ofApp::setup() {
 	mCSVRowCounter = 0;
 
 	//timer
-	mWithoutTime = 200; //
+	mWithoutTime = 2000; //
 	mTimer = Timer::create(mWithoutTime);
 	mTimer->activate();
 
 	//setup 
 	setupGestureDetection();
+
+	//UDP sender
+	setupCommunication();
 }
 
 //--------------------------------------------------------------
@@ -176,6 +179,16 @@ void ofApp::setupGestureDetection() {
 
 	mLightTimer = Timer::create(350);
 	//mLightTimer->activate();
+}
+
+//--------------------------------------------------------------
+void ofApp::setupCommunication() {
+	//create the socket and set to send to 127.0.0.1:11999
+	ofxUDPSettings settings;
+	settings.sendTo("127.0.0.1", 11999);
+	settings.blocking = false;
+
+	mUDPConnection.Setup(settings);
 }
 
 //--------------------------------------------------------------

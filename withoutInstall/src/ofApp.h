@@ -68,8 +68,9 @@ class ofApp : public ofBaseApp{
 
 
 		// send commands
-		ofxUDPManager mUDPConnectionTable;
+		ofxUDPManager mUDPConnection;
 		std::string   mUDPIp;
 		int           mUDPPort;
+		void		  setupCommunication();
 		
 };

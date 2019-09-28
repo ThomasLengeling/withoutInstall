@@ -36,11 +36,14 @@ public:
 
 	//draw gestures
 	void drawGesture() {
-		ofBeginShape();
+		glEnable(GL_LINE_WIDTH);
+		glLineWidth(3);
+		glBegin(GL_LINE_STRIP);
 		for (auto & points : mGesturePos) {
-			ofVertex(points.x, points.y);
+			glVertex2f(points.x, points.y);
 		}
-		ofEndShape();
+		glEnd();
+		glDisable(GL_LINE_WIDTH);
 
 		if (mGesturePos.size() > 0) {
 			glm::vec2 last = mGesturePos.back();
