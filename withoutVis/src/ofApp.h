@@ -44,6 +44,11 @@ class ofApp : public ofBaseApp{
 		int mCSVRowCounter;
 		std::vector<WithoutRef> mWithouts;
 
+		//history
+		std::string currentWithout;
+		std::vector<WithoutRef> mWithoutHistory;
+
+
 
 		//img
 		ofImage mWithoutImg;
@@ -64,6 +69,9 @@ class ofApp : public ofBaseApp{
 		void updateUdpMsg();
 		ofxUDPManager mUdpConnection;
 
+		std::string tokenizeStr(std::string const &in, char sep);
+
+		std::vector<std::string> tokenizeVec(std::string const &in, char del);
 
 		//visualization events
 		int mDrawType;

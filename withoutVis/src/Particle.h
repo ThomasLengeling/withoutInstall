@@ -11,6 +11,7 @@ public:
 	std::string name;
 
 	ofFbo			mFboBatch;
+	int				allocated;
 	//ofTrueTypeFont  mParticleFont;
 	//ofTexture       mTexture;
 
@@ -19,10 +20,8 @@ public:
 		Body(_x, _y),
 		xv(_xv), yv(_yv) {
 
-		//mFboBatch.allocate(0, 0);
-		//mParticleFont.load("AmsiPro-Ultra.ttf", 28, true, true);
-
-		
+		allocated = -1;
+		mFboBatch.allocate(1920, 1080);	
 	}
 
 	~Particle() {

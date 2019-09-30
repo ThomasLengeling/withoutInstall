@@ -15,7 +15,7 @@ void ofApp::setup() {
 
 	mWithoutLines.load("dashed-01.png");
 	ofTrueTypeFont::setGlobalDpi(72);
-	mWithoutFont.load("AmsiPro-Black.ttf", 275, true, true);
+	mWithoutFont.load("AmsiPro-Black.ttf", 225, true, true);
 
 	//safe file
 	ofSetLogLevel("ofxCsv", OF_LOG_VERBOSE); // See what's going on inside.
@@ -27,7 +27,7 @@ void ofApp::setup() {
 	mCSVRowCounter = 0;
 
 	//timer
-	mWithoutTime = 5000; //
+	mWithoutTime = 400; //
 	mTimer = Timer::create(mWithoutTime);
 	mTimer->activate();
 
@@ -53,8 +53,25 @@ void ofApp::update(){
 		//reset 
 		if (mAddGesture) {
 			std::string currentName = mWithouts.at(mCSVRowCounter)->getFirstName();
-			mUDPConnection.Send(currentName.c_str(), currentName.length());
+			//mUDPConnection.Send(currentName.c_str(), currentName.length());
 			mAddGesture = false;
+
+			//send json remolty
+			//name of the file remolty
+			
+			std::cout << "send gestures" << std::endl;
+			mUDPConnection.Send(currentName.c_str(), currentName.length());
+
+			//send all the positions
+			std::string positions = "";
+			positions += "s";
+			for (auto & gestures : mWithouts.at(mCSVRowCounter)->getGestures()) {
+				positions += "g ";
+				for (auto & points : gestures->getPos()) {
+					positions += to_string(points.x) + " " + to_string(points.y)+ " ";
+				}
+			}
+			mUDPConnection.Send(positions.c_str(), positions.length());
 		}
 
 		mCSVRowCounter++;
@@ -83,6 +100,7 @@ void ofApp::update(){
 	}
 }
 
+
 void ofApp::saveWithouths() {
 	ofJson withoutsAll;
 	for (auto & withouts : mWithouts) {
@@ -99,6 +117,9 @@ void ofApp::saveWithouths() {
 	std::string millis = to_string(ofGetSystemTimeMillis());
 	ofSaveJson(" without_" + month + "_" + day + "_" + hour + "_" + minute + "_" + millis+".json", withoutsAll);
 	ofLog() << "save withouts JSON file";
+
+	//send info
+
 
 }
 
@@ -210,7 +231,7 @@ void ofApp::setupGestureDetection() {
 void ofApp::setupCommunication() {
 	//create the socket and set to send to 127.0.0.1:11999
 	ofxUDPSettings settings;
-	settings.sendTo("169.254.196.41", IP_PORT);
+	settings.sendTo("127.0.0.1", IP_PORT);
 	settings.blocking = false;
 
 	mUDPConnection.Setup(settings);
@@ -300,15 +321,11 @@ void ofApp::mousePressed(int x, int y, int button){
 void ofApp::mouseReleased(int x, int y, int button){
 	if (x > mRectGesture.getMinX() && y > mRectGesture.getMinY() && x < mRectGesture.getMaxX() && y < mRectGesture.getMaxY()) {
 		mWithouts.at(mCSVRowCounter)->endGesture();
-		
-		mTimer->reset();
-		mTimer->activate();
+		std::cout << "end gesture" << std::endl;
 	}
 	else {
 
 
-		mTimer->reset();
-		mTimer->activate();
 	}
 }
 
@@ -320,6 +337,8 @@ void ofApp::mouseEntered(int x, int y){
 //--------------------------------------------------------------
 void ofApp::mouseExited(int x, int y){
 
+	mTimer->reset();
+	mTimer->activate();
 }
 
 //--------------------------------------------------------------

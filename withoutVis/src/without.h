@@ -36,16 +36,17 @@ public:
 
 	//draw gestures
 	void drawGesture() {
-		ofBeginShape();
+		glPushMatrix();
+		glEnable(GL_LINE_WIDTH);
+		glLineWidth(2);
+		glScalef(0.15, 0.15, 0.15);
+		glBegin(GL_LINE_STRIP);
 		for (auto & points : mGesturePos) {
-			ofVertex(points.x, points.y);
+			glVertex2f(points.x, points.y);
 		}
-		ofEndShape();
-
-		if (mGesturePos.size() > 0) {
-			glm::vec2 last = mGesturePos.back();
-			ofDrawCircle(last, 5);
-		}
+		glEnd();
+		glDisable(GL_LINE_WIDTH);
+		glPopMatrix();
 	}
 
 	//save json data
@@ -84,6 +85,8 @@ public:
 		mHitCounter  = 0;
 		mColor		 = ofColor(255);
 		mTimer		 = Timer::create(2500);
+
+		mGestureFbo.allocate(1920, 1080);
 	}
 
 	//create
@@ -100,6 +103,20 @@ public:
 
 	void toggleFirst() { firstActive = !firstActive;}
 	void toggleSecond() { secondActive = !secondActive; }
+
+	void generatFbo() {
+
+		mGestureFbo.begin();
+		ofClear(0, 0, 0, 0); // clear it out  
+		ofSetColor(255);
+		for (auto & gesture : mGestures) {
+			gesture->drawGesture();
+		}
+		mGestureFbo.end();
+	}
+	void drawGestureFbo() {
+		mGestureFbo.draw(0, 0);
+	}
 
 	//add point to gesture
 	void addPoint(glm::vec2 pos) {
@@ -209,6 +226,8 @@ private:
 	std::vector<GesturePosRef> mGestures;
 	GesturePosRef mCurrentGesture;
 	ofJson mJSONGestures;
+
+	ofFbo mGestureFbo;
 };
 
 

@@ -28,6 +28,9 @@ void ofApp::setup(){
 			std::string firstName = mWithouts.at(i)->getFirstName();
 			particle.setName(firstName);
 		}
+		else {
+			particle.setName(" ");
+		}
 		particleSystem.add(particle);
 	}
 
@@ -75,6 +78,9 @@ void ofApp::update(){
 		if (i < mWithoutCSV.getNumRows() - 1) {
 			particleSystem.addRepulsionForce(cur, 95, 0.15);
 		}
+		else {
+			particleSystem.addRepulsionForce(cur, 5, 0.15);
+		}
 		// forces on this particle
 		cur.bounceOffWalls(-200, -200, ofGetWidth()+200, ofGetHeight()+200);
 		cur.addDampingForce();
@@ -117,12 +123,13 @@ void ofApp::updateUdpMsg() {
 	char udpMessage[100000];
 	mUdpConnection.Receive(udpMessage, 100000);
 	string message = udpMessage;
-	
+
 	if (message != "") {
 		ofLog() << message << std::endl;
 		std::cout << message << std::endl;
 		for (auto & withoutname : mWithouts) {
 			std::string name = withoutname->getFirstName();
+			currentWithout = name;
 			if (message.compare(name) == 0) {
 				particleSystem.addRepulsionForce(ofGetWidth() / 2, ofGetHeight() / 2, 300, 5);
 				withoutname->incHit();
@@ -131,19 +138,90 @@ void ofApp::updateUdpMsg() {
 
 				withoutname->mTimer->reset();
 				withoutname->mTimer->activate();
+
+				//save value
+
+
+
 			}
 		}
 		//update visualization when the msg is received
 	}
 
 
+	if (message != "") {
+		std::cout << message.substr(0, 1) << std::endl;
+		if (message.substr(0, 1).compare("s") == 0) {
+			std::string newMsg = message.substr(2, message.size());
+
+			std::vector < std::string > gesturesStr = tokenizeVec(newMsg, (char)'g');
+
+			int j = 0;
+			for (auto & ges : gesturesStr) {
+				std::vector<std::string> gestures = tokenizeVec(ges, ' ');
+				std::cout << j << std::endl;
+				WithoutRef withoutGesture = Without::create();
+				withoutGesture->initGesture();
+				for (int i = 0; i < gestures.size() / 2.0; i++) {
+
+					int x = i * 2 + 0;
+					int y = i * 2 + 1;
+
+
+					float xpos = stof(gestures.at(x));
+					float ypos = stof(gestures.at(y));
+
+					std::cout << xpos << " " << ypos << std::endl;
+					withoutGesture->addPoint(glm::vec2(xpos, ypos));
+					//add gestures point
+
+
+				}
+				//add gestures to
+				withoutGesture->endGesture();
+				withoutGesture->setFirstName(currentWithout);
+				withoutGesture->generatFbo();
+				mWithoutHistory.push_back(withoutGesture);
+				j++;
+			}
+
+		}
+	}
+
+
+
+
 }
 
+std::string ofApp::tokenizeStr(std::string const &in, char sep) {
+	std::string::size_type b = 0;
+	std::string result;
+
+	while ((b = in.find_first_not_of(sep, b)) != std::string::npos) {
+		auto e = in.find_first_of(sep, b);
+		result+=in.substr(b, e - b);
+		b = e;
+	}
+	return result;
+}
+
+
+std::vector<std::string> ofApp::tokenizeVec(std::string const &in, char sep) {
+	std::string::size_type b = 0;
+	std::vector<std::string> result;
+
+	while ((b = in.find_first_not_of(sep, b)) != std::string::npos) {
+		auto e = in.find_first_of(sep, b);
+		result.push_back(in.substr(b, e - b));
+		b = e;
+	}
+	return result;
+}
 
 //--------------------------------------------------------------
 void ofApp::draw(){
 	ofFill();
-	ofSetColor(ofColor(0, 0, 0, 10));
+	ofSetColor(ofColor(0, 0, 0, 15));
 	ofDrawRectangle(0, 0, ofGetWidth(), ofGetHeight());
 
 	if (mDrawType == 0) {
@@ -161,6 +239,16 @@ void ofApp::draw(){
 	//draw withouth
 	mWithoutImg.draw(ofGetWidth() / 2.0 - 1920 * 0.15, ofGetHeight() / 2.0 - 1080 * 0.15, 1920 * 0.3, 1080 * 0.3);
 
+	//draw history
+	for (auto & gestures : mWithoutHistory) {
+		//gestures->drawGestures();
+	}
+
+	for (auto & gestures : mWithoutHistory) {
+		gestures->drawGestureFbo();
+	}
+
+	//draw connecting
 }
 
 //--------------------------------------------------------------
@@ -180,6 +268,7 @@ void ofApp::drawParticles() {
 			ofSetColor(lightV * 255);
 
 			//color
+			ofNoFill();
 			ofPushMatrix();
 			ofTranslate(cur.x, cur.y);
 			ofScale(1.0 + mWithouts.at(i)->getHits() / 10.0);
@@ -291,6 +380,36 @@ void ofApp::keyPressed(int key){
 		mTimerForce->activate();
 		mTimerForce->reset();
 		std::cout << "reset timer" << std::endl;
+	}
+
+	if (key == 'v') {
+		std::string message = "s 10.1 10.2 10.3 10.4 10.5 10.6 g 11.2 11.3 11.4 11.5";
+		std::cout << message.substr(0, 1) << std::endl;
+		if (message.substr(0, 1).compare("s") == 0) {
+			std::string newMsg = message.substr(2, message.size());
+
+			std::vector < std::string > gesturesStr = tokenizeVec(newMsg, (char)'g');
+
+			int j = 0;
+			for (auto & ges : gesturesStr) {
+				std::vector<std::string> gestures = tokenizeVec(ges, ' ');
+				std::cout << j << std::endl;
+				for (int i = 0; i < gestures.size() / 2.0; i++) {
+
+					int x = i * 2 + 0;
+					int y = i * 2 + 1;
+
+
+					float xpos = stof(gestures.at(x));
+					float ypos = stof(gestures.at(y));
+
+					std::cout << xpos << " " << ypos << std::endl;
+
+				}
+				j++;
+			}
+			
+		}
 	}
 }
 

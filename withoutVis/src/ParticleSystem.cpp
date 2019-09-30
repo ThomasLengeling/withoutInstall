@@ -101,7 +101,7 @@ void ParticleSystem::draw() {
 		particles[i].draw();
 	glEnd();
 	//glDisable(GL_POINT_SIZE);
-
+	
 	
 	if (tree != NULL) {
 		tree->draw();

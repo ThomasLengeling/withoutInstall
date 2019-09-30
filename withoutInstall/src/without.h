@@ -69,6 +69,10 @@ public:
 	}
 
 
+	std::vector< glm::vec2> getPos() {
+		return mGesturePos;
+	}
+
 
 
 private:
@@ -134,6 +138,7 @@ public:
 		}
 	}
 
+	//
 	ofJson getWithoutJson() {
 		return mJSONGestures;
 	}
@@ -147,6 +152,10 @@ public:
 		int minute = ofGetMinutes();
 		int millis = ofGetSystemTimeMillis();
 		ofSaveJson(firstName+" without_" + to_string(month) + "_" + to_string(day) + "_" + to_string(hour) + "_" + to_string(minute) + "_" + to_string(millis)+".json", mJSONGestures);
+
+		ofSaveJson("../../../../withoutVis/bin/data/"+firstName + " without_" + to_string(month) + "_" + to_string(day) + "_" + to_string(hour) + "_" + to_string(minute) + "_" + to_string(millis) + ".json", mJSONGestures);
+
+		std::cout << "write json" << std::endl;
 	}
 
 	void drawCurrentGesture() {
@@ -167,6 +176,10 @@ public:
 		mCurrentGesture = GesturePos::create();
 	}
 
+	std::vector<GesturePosRef> getGestures() {
+		return mGestures;
+	}
+	
 private:
 
 	// activation
