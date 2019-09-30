@@ -45,6 +45,9 @@ class ofApp : public ofBaseApp{
 		//img
 		ofImage mWithoutImg;
 
+		//img
+		ofImage mWithoutLines;
+
 		//without
 		ofTrueTypeFont  mWithoutFont;
 

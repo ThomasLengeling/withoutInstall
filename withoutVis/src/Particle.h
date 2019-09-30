@@ -11,26 +11,31 @@ public:
 	std::string name;
 
 	ofFbo			mFboBatch;
-	ofTrueTypeFont  mParticleFont;
-	ofTexture       mTexture;
+	//ofTrueTypeFont  mParticleFont;
+	//ofTexture       mTexture;
 
 	Particle(float _x, float _y,
 		float _xv = 0, float _yv = 0) :
 		Body(_x, _y),
 		xv(_xv), yv(_yv) {
 
-		mFboBatch.allocate(0, 0);
-		mParticleFont.load("AmsiPro-Ultra.ttf", 28, true, true);
+		//mFboBatch.allocate(0, 0);
+		//mParticleFont.load("AmsiPro-Ultra.ttf", 28, true, true);
 
+		
+	}
+
+	~Particle() {
+		//delete(&mParticleFont);
 	}
 
 	void setName(std::string nm) {
 		name = nm;
-
+		/*
 		ofRectangle rect = mParticleFont.getStringBoundingBox(name, 0, 0);
 		mFboBatch.allocate(rect.width, rect.height);
 
-		mTexture = mParticleFont.getStringTexture(name);
+		//mTexture = mParticleFont.getStringTexture(name);
 
 		//mTexture = mParticleFont.
 
@@ -39,6 +44,7 @@ public:
 		ofSetColor(255);
 		mParticleFont.drawString(name, 0, 0);
 		mFboBatch.end();
+		*/
 	}
 
 

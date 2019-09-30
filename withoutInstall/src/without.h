@@ -37,7 +37,7 @@ public:
 	//draw gestures
 	void drawGesture() {
 		glEnable(GL_LINE_WIDTH);
-		glLineWidth(3);
+		glLineWidth(8);
 		glBegin(GL_LINE_STRIP);
 		for (auto & points : mGesturePos) {
 			glVertex2f(points.x, points.y);

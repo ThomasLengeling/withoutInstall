@@ -12,8 +12,10 @@ void ofApp::setup() {
 
 	//fonts
 	mWithoutImg.load("cw_logo reduced-white_1920x1080.png");
+
+	mWithoutLines.load("dashed-01.png");
 	ofTrueTypeFont::setGlobalDpi(72);
-	mWithoutFont.load("AmsiPro-Ultra.ttf", 192, true, true);
+	mWithoutFont.load("AmsiPro-Black.ttf", 275, true, true);
 
 	//safe file
 	ofSetLogLevel("ofxCsv", OF_LOG_VERBOSE); // See what's going on inside.
@@ -106,14 +108,23 @@ void ofApp::draw(){
 	ofSetColor(ofColor(0, 0, 0));
 	ofDrawRectangle(0, 0, ofGetWidth(), ofGetHeight());
 
+	//draw without
 	ofSetColor(ofColor(255, 255, 255));
 	mWithoutImg.draw(0, 0);
 
-	//draw the without words
-	ofSetColor(255, 255, 255);
-	mWithoutFont.drawString(mWithouts.at(mCSVRowCounter)->getFirstName(), 160, 380);
-	mWithoutFont.drawString("", 160, 890);//mWithouts.at(mCSVRowCounter)->getFirstName(), 160, 890);
+	//draw line
+	ofSetColor(ofColor(255, 255, 255));
 
+	mWithoutFont.drawString("_ _ _ _ _ _ _ _ _ _ _", 140, 940);
+	mWithoutLines.draw(0, 1080 - 200);;//, 1920, 1080);
+
+	//draw the without words
+	ofPushMatrix();
+	ofSetColor(255, 255, 255);
+	ofRotate(-1);
+	mWithoutFont.drawString(mWithouts.at(mCSVRowCounter)->getFirstName(), 140, 380);
+	mWithoutFont.drawString("", 140, 890);//mWithouts.at(mCSVRowCounter)->getFirstName(), 160, 890);
+	ofPopMatrix();
 
 	drawGestureBox();
 
@@ -126,8 +137,10 @@ void ofApp::drawGestureBox() {
 	//draw bouding box
 	if (mInsideGesture) {
 		ofNoFill();
+		ofSetLineWidth(1);
 		ofSetColor(255, 255, 255, 200);
-		ofDrawRectangle(mRectGesture);
+		//ofDrawRectangle(mRectGesture);
+
 	}
 
 	//when there is no gestures detection
@@ -135,7 +148,7 @@ void ofApp::drawGestureBox() {
 		ofNoFill();
 		ofSetLineWidth(2.50);
 		ofSetColor(120, 120, 120);
-		ofDrawRectangle(mRectGesture);
+		//ofDrawRectangle(mRectGesture);
 		ofSetLineWidth(1);
 	}
 
