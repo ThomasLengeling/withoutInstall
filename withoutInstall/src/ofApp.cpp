@@ -300,8 +300,15 @@ void ofApp::mousePressed(int x, int y, int button){
 void ofApp::mouseReleased(int x, int y, int button){
 	if (x > mRectGesture.getMinX() && y > mRectGesture.getMinY() && x < mRectGesture.getMaxX() && y < mRectGesture.getMaxY()) {
 		mWithouts.at(mCSVRowCounter)->endGesture();
+		
+		mTimer->reset();
+		mTimer->activate();
 	}
 	else {
+
+
+		mTimer->reset();
+		mTimer->activate();
 	}
 }
 
