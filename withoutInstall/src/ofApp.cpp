@@ -45,6 +45,16 @@ void ofApp::update(){
 	if (mTimer->isFinished()) {
 		mTimer->reset();
 		mTimer->activate();
+
+
+
+		//reset 
+		if (mAddGesture) {
+			std::string currentName = mWithouts.at(mCSVRowCounter)->getFirstName();
+			mUDPConnection.Send(currentName.c_str(), currentName.length());
+			mAddGesture = false;
+		}
+
 		mCSVRowCounter++;
 
 		//finish going through all the withouts that are in the CSV file
@@ -185,7 +195,7 @@ void ofApp::setupGestureDetection() {
 void ofApp::setupCommunication() {
 	//create the socket and set to send to 127.0.0.1:11999
 	ofxUDPSettings settings;
-	settings.sendTo("127.0.0.1", 11999);
+	settings.sendTo("127.0.0.1", IP_PORT);
 	settings.blocking = false;
 
 	mUDPConnection.Setup(settings);
@@ -258,10 +268,14 @@ void ofApp::mousePressed(int x, int y, int button){
 		mInsideGesture = true;
 		mWithouts.at(mCSVRowCounter)->initGesture();
 		mWithouts.at(mCSVRowCounter)->addPoint(glm::vec2(x, y));
+
+		mAddGesture = true;
+
 	}
 	else {
 		mLightTimer->reset();
 		mInsideGesture = false;
+
 	}
 
 

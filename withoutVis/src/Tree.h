@@ -198,20 +198,25 @@ public:
 		}
 	}
 	void draw() {
-		ofSetColor(255);
+		ofSetColor(175);
 		ofNoFill();
 		ofDrawRectangle(minX, minY, maxX - minX, maxY - minY);
-		ofDrawCircle(midX, midY, 5);
+		//ofDrawCircle(midX, midY, 5);
 
-
+		/*
 		ofSetColor(ofColor(255, 255, 255));
 			for (int i = 0; i < nParticles; i++) {
 
 				//particles[i]->mFboBatch.draw(glm::vec2(midX, midY));
+				
+				if (particles[i]->mTexture.isAllocated()) {
 					particles[i]->mTexture.draw(midX, midY);
+					break;
+				}
 				
 			//mtreeFont.drawString(particles[i]->name, midX, midY);
 		}
+		*/
 
 		if(hasChildren) {
 			nw->draw();

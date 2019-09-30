@@ -14,6 +14,7 @@
 #include "Timer.h"
 
 #define WITHOUT_FILE "WITHOUTS.csv"
+#define IP_PORT     32000
 
 class ofApp : public ofBaseApp{
 
@@ -51,6 +52,7 @@ class ofApp : public ofBaseApp{
 		//without manager
 		std::vector<WithoutRef> mWithouts;
 		void saveWithouths();
+		bool mAddGesture;
 
 		//global timer
 		TimerRef  mTimer;

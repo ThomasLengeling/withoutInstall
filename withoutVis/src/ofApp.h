@@ -10,7 +10,7 @@
 #include "ParticleSystem.h"
 
 #define WITHOUT_FILE "WITHOUTS.csv"
-#define PORT	      19999
+#define IP_PORT     32000
 
 class ofApp : public ofBaseApp{
 
@@ -68,6 +68,11 @@ class ofApp : public ofBaseApp{
 		//visualization events
 		int mDrawType;
 
-		
+		bool mFullScreen;
+
+		//timer
+		TimerRef mTimerForce;
+		bool     activateForce;
+
 
 };

@@ -2,7 +2,7 @@
 
 
 #include "ofApp.h"
-
+#include "Timer.h"
 
 //-----------------------------------------------------------------
 // FirstName Without SecondName
@@ -65,9 +65,6 @@ public:
 		mGesturePos.clear();
 	}
 
-
-
-
 private:
 	std::vector<glm::vec2> mGesturePos;
 
@@ -75,17 +72,21 @@ private:
 
 
 //-----------------------------------------------------------------
-
 class Without {
 public:
 
+	//color
 	Without() {
 		firstActive  = false;
 		secondActive = false;
 		firstName    = "";
 		secondName   = "";
+		mHitCounter  = 0;
+		mColor		 = ofColor(255);
+		mTimer		 = Timer::create(2500);
 	}
 
+	//create
 	static WithoutRef create() {
 		return std::make_shared<Without>();
 	}
@@ -131,6 +132,7 @@ public:
 		}
 	}
 
+	//without json
 	ofJson getWithoutJson() {
 		return mJSONGestures;
 	}
@@ -146,23 +148,49 @@ public:
 		ofSaveJson(firstName+" without_" + to_string(month) + "_" + to_string(day) + "_" + to_string(hour) + "_" + to_string(minute) + "_" + to_string(millis)+".json", mJSONGestures);
 	}
 
+	//inc hit
+	void incHit() {
+		mHitCounter++;
+	}
+
+	//get hits
+	int getHits() {
+		return mHitCounter;
+	}
+
+	//get gesture
 	void drawCurrentGesture() {
 		if (mCurrentGesture != NULL) {
 			mCurrentGesture->drawGesture();
 		}
 	}
 
+	//get gestures
 	void drawGestures() {
 		for (auto & gesture : mGestures) {
 			gesture->drawGesture();
 		}
 	}
 
+	//clear
 	void clear() {
 		mGestures.clear();
 		mJSONGestures.clear();
 		mCurrentGesture = GesturePos::create();
 	}
+
+	//get color
+	void setColor(int color) {
+		mColor = color;
+	}
+
+	//color
+	ofColor getColor() {
+		return mColor;
+	}
+
+	//timer
+	TimerRef mTimer;
 
 private:
 
@@ -172,6 +200,10 @@ private:
 
 	std::string firstName;
 	std::string secondName;
+
+	int mHitCounter;
+
+	ofColor mColor;
 
 	//json files
 	std::vector<GesturePosRef> mGestures;

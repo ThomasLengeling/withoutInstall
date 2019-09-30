@@ -53,7 +53,9 @@ public:
 	//disable times
 	void activate() { mEnable = true; }
 	void disable() { mEnable = false; }
+
 	bool isFinished() { return mTimerReached; }
+	bool isActivate() { return mEnable; }
 
 private:
 
