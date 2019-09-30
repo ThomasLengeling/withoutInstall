@@ -27,7 +27,7 @@ void ofApp::setup() {
 	mCSVRowCounter = 0;
 
 	//timer
-	mWithoutTime = 400; //
+	mWithoutTime = 5500; //
 	mTimer = Timer::create(mWithoutTime);
 	mTimer->activate();
 
