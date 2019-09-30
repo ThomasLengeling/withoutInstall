@@ -41,8 +41,8 @@ public:
 
 			if (timer >= mEndTime && !mTimerReached) {
 				mTimerReached = true;
-				ofMessage msg("Timer Reached");
-				ofSendMessage(msg);
+				//ofMessage msg("Timer Reached");
+				//ofSendMessage(msg);
 			}
 		}
 	}

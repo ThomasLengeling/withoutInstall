@@ -39,7 +39,6 @@ public:
 		glPushMatrix();
 		glEnable(GL_LINE_WIDTH);
 		glLineWidth(2);
-		glScalef(0.15, 0.15, 0.15);
 		glBegin(GL_LINE_STRIP);
 		for (auto & points : mGesturePos) {
 			glVertex2f(points.x, points.y);
@@ -48,6 +47,7 @@ public:
 		glDisable(GL_LINE_WIDTH);
 		glPopMatrix();
 	}
+
 
 	//save json data
 	ofJson generateJSON() {
@@ -64,6 +64,10 @@ public:
 	//clear data
 	void clear() {
 		mGesturePos.clear();
+	}
+
+	std::vector<glm::vec2> getPoints() {
+		return mGesturePos;
 	}
 
 private:
@@ -105,6 +109,40 @@ public:
 	void toggleSecond() { secondActive = !secondActive; }
 
 	void generatFbo() {
+		float maxX = 0;
+		float maxY = 0;
+
+
+		float minX = 9999;
+		float minY = 9999;
+
+
+		for (auto & gesture : mGestures) {
+			for (auto & points : gesture->getPoints()) {
+				cout << points.x << " " << points.y << std::endl;
+				if (maxX < points.x) {
+					maxX = points.x;
+				}
+				if (maxY < points.y) {
+					maxY = points.y;
+				}
+
+				if (minX > points.x) {
+					minX = points.x;
+				}
+				if (minY > points.y) {
+					minY = points.y;
+				}
+			}
+		}
+
+		maxPoint = glm::vec2(maxX, maxY);
+		minPoint = glm::vec2(minX, minY);
+
+		midPoint = glm::vec2((maxX - minX) / 2.0, (maxY - minY / 2.0));
+
+		mGestureFbo.allocate(maxX, maxY);
+		std::cout << "created fbo" << maxX << " " << maxY << std::endl;
 
 		mGestureFbo.begin();
 		ofClear(0, 0, 0, 0); // clear it out  
@@ -114,6 +152,11 @@ public:
 		}
 		mGestureFbo.end();
 	}
+
+	glm::vec2 getMid() {
+		return midPoint;
+	}
+
 	void drawGestureFbo() {
 		mGestureFbo.draw(0, 0);
 	}
@@ -206,6 +249,10 @@ public:
 		return mColor;
 	}
 
+	ofFbo getFbo() {
+		return mGestureFbo;
+	}
+
 	//timer
 	TimerRef mTimer;
 
@@ -228,6 +275,11 @@ private:
 	ofJson mJSONGestures;
 
 	ofFbo mGestureFbo;
+
+	glm::vec2 midPoint;
+
+	glm::vec2 maxPoint;
+	glm::vec2 minPoint;
 };
 
 

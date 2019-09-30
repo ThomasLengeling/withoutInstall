@@ -15,7 +15,7 @@ void ofApp::setup() {
 
 	mWithoutLines.load("dashed-01.png");
 	ofTrueTypeFont::setGlobalDpi(72);
-	mWithoutFont.load("AmsiPro-Black.ttf", 225, true, true);
+	mWithoutFont.load("AmsiPro-Black.ttf", 210, true, true);
 
 	//safe file
 	ofSetLogLevel("ofxCsv", OF_LOG_VERBOSE); // See what's going on inside.
@@ -64,13 +64,22 @@ void ofApp::update(){
 
 			//send all the positions
 			std::string positions = "";
-			positions += "s";
+			positions += "s ";
+			int i = 0;
+			int slice = 0;
 			for (auto & gestures : mWithouts.at(mCSVRowCounter)->getGestures()) {
-				positions += "g ";
-				for (auto & points : gestures->getPos()) {
-					positions += to_string(points.x) + " " + to_string(points.y)+ " ";
+				if (gestures->getPos().size() >= 2) {
+					if (i >= 1) { positions += "g "; }
+					for (auto & points : gestures->getPos()) {
+						if (slice % 3 == 0) {
+							positions += (to_string(int(points.x))) + " " + to_string(int(points.y)) + " ";
+						}
+						slice++;
+					}
+					i++;
 				}
 			}
+			std::cout << "send " << positions << std::endl;
 			mUDPConnection.Send(positions.c_str(), positions.length());
 		}
 
@@ -89,14 +98,14 @@ void ofApp::update(){
 
 	//detect if the mouse movement is inside of the rectangle
 	if (ofGetMouseX() > mRectGesture.getMinX() && ofGetMouseY() > mRectGesture.getMinY() && ofGetMouseX() < mRectGesture.getMaxX() && ofGetMouseY() < mRectGesture.getMaxY()) {
-		mInsideGesture = true;
-		mTimer->reset();
-		mTimer->activate();
-		mLightTimer->activate();
+		///mInsideGesture = true;
+		//mTimer->reset();
+		//mTimer->activate();
+		//mLightTimer->activate();
 	}
 	else {
-		mLightTimer->reset();
-		mInsideGesture = false;
+		//mLightTimer->reset();
+		//mInsideGesture = false;
 	}
 }
 
@@ -136,7 +145,7 @@ void ofApp::draw(){
 	//draw line
 	ofSetColor(ofColor(255, 255, 255));
 
-	mWithoutFont.drawString("_ _ _ _ _ _ _ _ _ _ _", 120, 940);
+	mWithoutFont.drawString("_ _ _ _ _ _ _ _ _ _", 120, 940);
 	mWithoutLines.draw(0, 1080 - 200);;//, 1920, 1080);
 
 	//draw the without words
@@ -259,17 +268,17 @@ void ofApp::mouseMoved(int x, int y ){
 
 	//detect if the mouse movement is inside of the rectangle
 	if (x > mRectGesture.getMinX() && y > mRectGesture.getMinY() && x < mRectGesture.getMaxX() && y < mRectGesture.getMaxY()) {
-		mInsideGesture = true;
+		//mInsideGesture = true;
 
-		mTimer->reset();
-		mTimer->activate();
+		//mTimer->reset();
+		//mTimer->activate();
 
-		mLightTimer->activate();
+		//mLightTimer->activate();
 
 	}
 	else {
-		mLightTimer->reset();
-		mInsideGesture = false;
+	//	mLightTimer->reset();
+		//mInsideGesture = false;
 	}
 }
 
@@ -322,6 +331,14 @@ void ofApp::mouseReleased(int x, int y, int button){
 	if (x > mRectGesture.getMinX() && y > mRectGesture.getMinY() && x < mRectGesture.getMaxX() && y < mRectGesture.getMaxY()) {
 		mWithouts.at(mCSVRowCounter)->endGesture();
 		std::cout << "end gesture" << std::endl;
+
+		mTimer->reset();
+		mTimer->activate();
+
+		mLightTimer->activate();
+		mInsideGesture = true;
+
+		mLightTimer->reset();
 	}
 	else {
 

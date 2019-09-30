@@ -27,6 +27,7 @@ void ofApp::setup(){
 		if (i < mWithoutCSV.getNumRows() - 1) {
 			std::string firstName = mWithouts.at(i)->getFirstName();
 			particle.setName(firstName);
+			particle.setAllocate(1);
 		}
 		else {
 			particle.setName(" ");
@@ -76,24 +77,24 @@ void ofApp::update(){
 		Particle& cur = particleSystem[i];
 		// global force on other particles
 		if (i < mWithoutCSV.getNumRows() - 1) {
-			particleSystem.addRepulsionForce(cur, 95, 0.15);
+			particleSystem.addRepulsionForce(cur, 95, 0.12);
 		}
 		else {
-			particleSystem.addRepulsionForce(cur, 5, 0.15);
+			particleSystem.addRepulsionForce(cur, 5, 0.12);
 		}
 		// forces on this particle
 		cur.bounceOffWalls(-200, -200, ofGetWidth()+200, ofGetHeight()+200);
 		cur.addDampingForce();
 	}
 	// single global forces
-	particleSystem.addAttractionForce(ofGetWidth() / 2, ofGetHeight() / 2, 1200, 0.01);
+	particleSystem.addAttractionForce(ofGetWidth() / 2, ofGetHeight() / 2, 1400, 0.017);
 	particleSystem.addRepulsionForce(mouseX, mouseY, 100, 4);
 
 	//without center
-	particleSystem.addRepulsionForce(ofGetWidth() / 2.0, ofGetHeight() / 2.0, 330, 4);
+	particleSystem.addRepulsionForce(ofGetWidth() / 2.0, ofGetHeight() / 2.0, 325, 3.2);
 
-	if (activateForce && !mTimerForce->isFinished() && mTimerForce->isActivate() ) {
-		particleSystem.addRepulsionForce(ofGetWidth() / 2.0, ofGetHeight() / 2.0, 380, 4);
+	if (activateForce && mTimerForce->isActivate() ) {
+		particleSystem.addRepulsionForce(ofGetWidth() / 2.0, ofGetHeight() / 2.0, 380, 3.3);
 	}
 
 	if (mTimerForce->isFinished()) {
@@ -125,11 +126,10 @@ void ofApp::updateUdpMsg() {
 	string message = udpMessage;
 
 	if (message != "") {
-		ofLog() << message << std::endl;
+		ofLog() <<"add: "<<message << std::endl;
 		std::cout << message << std::endl;
 		for (auto & withoutname : mWithouts) {
 			std::string name = withoutname->getFirstName();
-			currentWithout = name;
 			if (message.compare(name) == 0) {
 				particleSystem.addRepulsionForce(ofGetWidth() / 2, ofGetHeight() / 2, 300, 5);
 				withoutname->incHit();
@@ -141,7 +141,7 @@ void ofApp::updateUdpMsg() {
 
 				//save value
 
-
+				currentWithout = message;
 
 			}
 		}
@@ -150,28 +150,28 @@ void ofApp::updateUdpMsg() {
 
 
 	if (message != "") {
-		std::cout << message.substr(0, 1) << std::endl;
+		//std::cout << message.substr(0, 1) << std::endl;
 		if (message.substr(0, 1).compare("s") == 0) {
 			std::string newMsg = message.substr(2, message.size());
 
 			std::vector < std::string > gesturesStr = tokenizeVec(newMsg, (char)'g');
 
 			int j = 0;
+			cout << newMsg << std::endl;
+			WithoutRef withoutGesture = Without::create();
 			for (auto & ges : gesturesStr) {
 				std::vector<std::string> gestures = tokenizeVec(ges, ' ');
-				std::cout << j << std::endl;
-				WithoutRef withoutGesture = Without::create();
+				//std::cout << j << std::endl;
 				withoutGesture->initGesture();
 				for (int i = 0; i < gestures.size() / 2.0; i++) {
 
 					int x = i * 2 + 0;
 					int y = i * 2 + 1;
 
-
 					float xpos = stof(gestures.at(x));
 					float ypos = stof(gestures.at(y));
 
-					std::cout << xpos << " " << ypos << std::endl;
+					//std::cout << xpos << " " << ypos << std::endl;
 					withoutGesture->addPoint(glm::vec2(xpos, ypos));
 					//add gestures point
 
@@ -179,11 +179,31 @@ void ofApp::updateUdpMsg() {
 				}
 				//add gestures to
 				withoutGesture->endGesture();
-				withoutGesture->setFirstName(currentWithout);
-				withoutGesture->generatFbo();
-				mWithoutHistory.push_back(withoutGesture);
+				//copy without
 				j++;
 			}
+
+			withoutGesture->setFirstName(currentWithout);
+			withoutGesture->generatFbo();
+			mWithoutHistory.push_back(withoutGesture);
+
+			for (int i = 0; i < particleSystem.size(); i++) {
+				if (particleSystem[i].allocated == -1) {
+					particleSystem[i].mFboBatch = withoutGesture->getFbo();
+					particleSystem[i].setName(currentWithout);
+					particleSystem[i].allocated = 2;
+					particleSystem[i].cx = withoutGesture->getMid().x;//  particleSystem[i].mFboBatch.getWidth() / 2.0;
+					particleSystem[i].cy = withoutGesture->getMid().y;// particleSystem[i].mFboBatch.getHeight() / 2.0;
+					std::cout << "Fbo added" << currentWithout<< std::endl;
+					break;
+				}
+			}
+
+			//force
+			activateForce = true;
+			mTimerForce->reset();
+			mTimerForce->activate();
+
 
 		}
 	}
@@ -228,6 +248,7 @@ void ofApp::draw(){
 		drawParticles();
 	}
 	if (mDrawType == 1) {
+		ofSetColor(255, 255, 255);
 		drawWithout();
 	}
 
@@ -240,13 +261,13 @@ void ofApp::draw(){
 	mWithoutImg.draw(ofGetWidth() / 2.0 - 1920 * 0.15, ofGetHeight() / 2.0 - 1080 * 0.15, 1920 * 0.3, 1080 * 0.3);
 
 	//draw history
-	for (auto & gestures : mWithoutHistory) {
+	//for (auto & gestures : mWithoutHistory) {
 		//gestures->drawGestures();
-	}
+	//}
 
-	for (auto & gestures : mWithoutHistory) {
-		gestures->drawGestureFbo();
-	}
+	//for (auto & gestures : mWithoutHistory) {
+	//	gestures->drawGestureFbo();
+	//}
 
 	//draw connecting
 }
@@ -256,10 +277,12 @@ void ofApp::drawParticles() {
 	//ofFill();
 	particleSystem.draw();
 
+
+
 	
 	for (int i = 0; i < particleSystem.size(); i++) {
 		Particle& cur = particleSystem[i];
-		if (i < mWithoutCSV.getNumRows() -1) {
+		if (i < mWithoutCSV.getNumRows() - 1) {
 
 			//color 
 			ofColor color = mWithouts.at(i)->getColor();
@@ -277,8 +300,43 @@ void ofApp::drawParticles() {
 			ofRectangle rect = mWithoutFontSmall.getStringBoundingBox(firstName, 0, 0);
 			ofDrawRectangle(rect);
 			ofPopMatrix();
+
+			cur.cx = rect.getCenter().x;
+			cur.cy = rect.getCenter().y;
+
+		}
+
+		//draw fbo drawing
+		if (cur.allocated == 2) {
+			ofPushMatrix();
+			ofTranslate(cur.x, cur.y);
+			ofScale(0.15, 0.15, 0.15);
+			cur.mFboBatch.draw(0, 0);
+			ofPopMatrix();
 		}
 	}
+
+
+		//draw connecting lines
+	for (int i = 0; i < mWithoutCSV.getNumRows() - 1; i++) {
+		Particle& cur = particleSystem[i];
+		for (int j = mWithoutCSV.getNumRows(); j < particleSystem.size(); j++) {
+			Particle& cur2 = particleSystem[j];
+			if (cur2.name.compare(cur.name) == 0) {
+				ofSetColor(255, 255, 255, 30);
+				ofDrawLine(cur.x + cur.cx, cur.y + cur.cy, cur2.x + cur2.cx, cur2.y + cur2.cy);
+
+
+				ofPushMatrix();
+				ofScale(0.15, 0.15, 0.15);
+				ofDrawLine(cur.x + cur.cx, cur.y + cur.cy, cur2.x + cur2.cx, cur2.y + cur2.cy);
+				ofPopMatrix();
+			}
+
+		}
+	}
+	
+	
 }
 //--------------------------------------------------------------
 void ofApp::drawWithout() {
@@ -377,8 +435,8 @@ void ofApp::keyPressed(int key){
 
 	if (key == 'z') {
 		activateForce = true;
-		mTimerForce->activate();
 		mTimerForce->reset();
+		mTimerForce->activate();
 		std::cout << "reset timer" << std::endl;
 	}
 
@@ -393,7 +451,7 @@ void ofApp::keyPressed(int key){
 			int j = 0;
 			for (auto & ges : gesturesStr) {
 				std::vector<std::string> gestures = tokenizeVec(ges, ' ');
-				std::cout << j << std::endl;
+				//std::cout << j << std::endl;
 				for (int i = 0; i < gestures.size() / 2.0; i++) {
 
 					int x = i * 2 + 0;
@@ -403,7 +461,7 @@ void ofApp::keyPressed(int key){
 					float xpos = stof(gestures.at(x));
 					float ypos = stof(gestures.at(y));
 
-					std::cout << xpos << " " << ypos << std::endl;
+					//std::cout << xpos << " " << ypos << std::endl;
 
 				}
 				j++;

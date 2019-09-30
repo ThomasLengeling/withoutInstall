@@ -8,6 +8,8 @@ class Particle : public Body {
 public:
 	float xv, yv;
 	float xf, yf;
+	float cx;
+	float cy;
 	std::string name;
 
 	ofFbo			mFboBatch;
@@ -21,11 +23,15 @@ public:
 		xv(_xv), yv(_yv) {
 
 		allocated = -1;
-		mFboBatch.allocate(1920, 1080);	
+		//mFboBatch.allocate(1920, 1080);	
 	}
 
 	~Particle() {
 		//delete(&mParticleFont);
+	}
+
+	void setAllocate(int type) {
+		allocated = type;
 	}
 
 	void setName(std::string nm) {
@@ -98,6 +104,4 @@ public:
 		glVertex2f(x, y);
 	}
 
-	void drawName() {
-	}
 };
