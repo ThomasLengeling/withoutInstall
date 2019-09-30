@@ -84,10 +84,10 @@ void ofApp::update(){
 	particleSystem.addRepulsionForce(mouseX, mouseY, 100, 4);
 
 	//without center
-	//particleSystem.addRepulsionForce(ofGetWidth() / 2.0, ofGetHeight() / 2.0, 300, 4);
+	particleSystem.addRepulsionForce(ofGetWidth() / 2.0, ofGetHeight() / 2.0, 330, 4);
 
 	if (activateForce && !mTimerForce->isFinished() && mTimerForce->isActivate() ) {
-		particleSystem.addRepulsionForce(ofGetWidth() / 2.0, ofGetHeight() / 2.0, 300, 4);
+		particleSystem.addRepulsionForce(ofGetWidth() / 2.0, ofGetHeight() / 2.0, 380, 4);
 	}
 
 	if (mTimerForce->isFinished()) {
