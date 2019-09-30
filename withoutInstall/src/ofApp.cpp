@@ -133,8 +133,10 @@ void ofApp::drawGestureBox() {
 	//when there is no gestures detection
 	if (!mInsideGesture) {
 		ofNoFill();
-		ofSetColor(100, 100, 100);
+		ofSetLineWidth(2.50);
+		ofSetColor(120, 120, 120);
 		ofDrawRectangle(mRectGesture);
+		ofSetLineWidth(1);
 	}
 
 	//light effect around the box
