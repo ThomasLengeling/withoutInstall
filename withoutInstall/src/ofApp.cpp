@@ -115,15 +115,15 @@ void ofApp::draw(){
 	//draw line
 	ofSetColor(ofColor(255, 255, 255));
 
-	mWithoutFont.drawString("_ _ _ _ _ _ _ _ _ _ _", 140, 940);
+	mWithoutFont.drawString("_ _ _ _ _ _ _ _ _ _ _", 120, 940);
 	mWithoutLines.draw(0, 1080 - 200);;//, 1920, 1080);
 
 	//draw the without words
 	ofPushMatrix();
 	ofSetColor(255, 255, 255);
 	ofRotate(-1);
-	mWithoutFont.drawString(mWithouts.at(mCSVRowCounter)->getFirstName(), 140, 380);
-	mWithoutFont.drawString("", 140, 890);//mWithouts.at(mCSVRowCounter)->getFirstName(), 160, 890);
+	mWithoutFont.drawString(mWithouts.at(mCSVRowCounter)->getFirstName(), 120, 380);
+	mWithoutFont.drawString("", 120, 890);//mWithouts.at(mCSVRowCounter)->getFirstName(), 160, 890);
 	ofPopMatrix();
 
 	drawGestureBox();
@@ -200,9 +200,9 @@ void ofApp::loadWithoutFile(){
 }
 //--------------------------------------------------------------
 void ofApp::setupGestureDetection() {
-	mRectGesture = ofRectangle(160, 890 - 200, 1700, 250);
+	mRectGesture = ofRectangle(120, 650, 1740, 340);
 
-	mLightTimer = Timer::create(350);
+	mLightTimer = Timer::create(150);
 	//mLightTimer->activate();
 }
 
