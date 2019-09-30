@@ -7,7 +7,7 @@ int main( ){
 	ofGLFWWindowSettings  settings;
 	settings.decorated = false;
 	settings.setSize(1920, 1080);
-	settings.setPosition(glm::vec2(0, 0));
+	settings.setPosition(glm::vec2(-100, 0));
 	ofCreateWindow(settings);
 
 	// this kicks off the running of my app
