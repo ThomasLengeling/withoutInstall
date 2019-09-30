@@ -177,7 +177,6 @@ void ofApp::drawParticles() {
 			ofColor color = mWithouts.at(i)->getColor();
 
 			float lightV = ofClamp(mWithouts.at(i)->mTimer->getValue(), 0.0, 1.0);
-			std::cout << lightV << " "<<std::endl;
 			ofSetColor(lightV * 255);
 
 			//color
