@@ -48,6 +48,21 @@ public:
 		glPopMatrix();
 	}
 
+	void drawGestureMap(glm::vec2 min, glm::vec2 max) {
+		glPushMatrix();
+		glEnable(GL_LINE_WIDTH);
+		glLineWidth(2);
+		glBegin(GL_LINE_STRIP);
+		for (auto & points : mGesturePos) {
+			float newX = ofMap(points.x, 0, 1920, min.x, max.x);
+			float newY = ofMap(points.y, 0, 1080, min.y, max.y);
+			glVertex2f(newX, newY);
+		}
+		glEnd();
+		glDisable(GL_LINE_WIDTH);
+		glPopMatrix();
+	}
+
 
 	//save json data
 	ofJson generateJSON() {
@@ -148,7 +163,8 @@ public:
 		ofClear(0, 0, 0, 0); // clear it out  
 		ofSetColor(255);
 		for (auto & gesture : mGestures) {
-			gesture->drawGesture();
+			//gesture->drawGesture();
+			gesture->drawGestureMap(minPoint, maxPoint);
 		}
 		mGestureFbo.end();
 	}

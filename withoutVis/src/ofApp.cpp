@@ -326,7 +326,6 @@ void ofApp::drawParticles() {
 				ofSetColor(255, 255, 255, 30);
 				ofDrawLine(cur.x + cur.cx, cur.y + cur.cy, cur2.x + cur2.cx, cur2.y + cur2.cy);
 
-
 				ofPushMatrix();
 				ofScale(0.15, 0.15, 0.15);
 				ofDrawLine(cur.x + cur.cx, cur.y + cur.cy, cur2.x + cur2.cx, cur2.y + cur2.cy);

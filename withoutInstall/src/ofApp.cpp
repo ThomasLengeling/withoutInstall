@@ -240,7 +240,7 @@ void ofApp::setupGestureDetection() {
 void ofApp::setupCommunication() {
 	//create the socket and set to send to 127.0.0.1:11999
 	ofxUDPSettings settings;
-	settings.sendTo("127.0.0.1", IP_PORT);
+	settings.sendTo("169.254.196.41", IP_PORT);
 	settings.blocking = false;
 
 	mUDPConnection.Setup(settings);
