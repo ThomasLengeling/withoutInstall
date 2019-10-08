@@ -253,8 +253,8 @@ void ofApp::draw(){
 	}
 
 	if (!mFullScreen) {
-		ofDrawBitmapString(ofToString(kParticles) + "k particles", 32, 32);
-		ofDrawBitmapString(ofToString((int)ofGetFrameRate()) + " fps", 32, 52);
+		//ofDrawBitmapString(ofToString(kParticles) + "k particles", 32, 32);
+		//ofDrawBitmapString(ofToString((int)ofGetFrameRate()) + " fps", 32, 52);
 	}
 
 	//draw withouth
